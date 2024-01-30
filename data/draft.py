@@ -1,5 +1,7 @@
 import random
 import re
+import signal
+import sys
 from urllib.request import urlopen
 
 import requests
@@ -11,14 +13,12 @@ import stored_variables
 
 
 def main():
+    # catching keyboardInterrtupt
+    signal.signal(signal.SIGINT, helpers.signal_handler)
+
     url = "http://oreilly.com"
     stored_variables.all_int_links.add(url)
     helpers.get_all_ext_links(url)
-
-    print("---")
-    print(stored_variables.all_ext_links)
-    print("---")
-    print(stored_variables.all_int_links)
 
 
 if __name__ == "__main__":

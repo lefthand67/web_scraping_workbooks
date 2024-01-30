@@ -1,5 +1,7 @@
 import random
 import re
+import signal
+import sys
 from urllib.request import urlopen
 
 import requests
@@ -24,7 +26,8 @@ def get_response_object(url):
             return r
     except Exception as e:
         result = e
-    print(f"Error {result}")
+
+    print(f"Error {result}: {url}")
     return 0
 
 
@@ -62,7 +65,6 @@ def get_internal_links(bs, include_url):
             reference = link.attrs["href"]
             # print("INTERNAL LINK:", reference)
         except Exception as e:
-            print("No, it's me!")
             print(type(e), e)
             continue
         if reference.startswith("/") or domain in reference:
@@ -94,9 +96,6 @@ def get_external_links(bs, exclude_url):
             continue
         if (domain not in reference) and ("http" in reference or "https" in reference):
             if reference not in external_links:
-                print()
-                print(domain)
-                print("GO TO EXT:", reference)
                 external_links.append(reference)
     return external_links
 
@@ -147,8 +146,6 @@ def get_domain(url):
 
 
 def get_all_ext_links(url):
-    print()
-    print("WORKING WITH:", url)
     r = get_response_object(url)
     if r:
         html = r.text
@@ -162,9 +159,19 @@ def get_all_ext_links(url):
     for link in external_links:
         if link not in stored_variables.all_ext_links:
             stored_variables.all_ext_links.add(link)
-            print("EXTERNAL LINK:", link)
+            print(link)
             print()
     for link in internal_links:
         if link not in stored_variables.all_int_links:
             stored_variables.all_int_links.add(link)
             get_all_ext_links(link)
+
+
+def signal_handler(sig, frame):
+    """
+    Use this code in your `main` function:
+    `signal.signal(signal.SIGINT, helpers.signal_handler)`
+    It will catch the keyboardInterrtupt Exception.
+    """
+    print("KeyboardInterrupt caught")
+    sys.exit(0)

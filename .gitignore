@@ -258,3 +258,7 @@ layers*/
 # all the files created for tests
 test*/
 test*
+
+# vim
+*.swp
+*.ses
