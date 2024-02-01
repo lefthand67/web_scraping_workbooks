@@ -260,5 +260,5 @@ test*/
 test*
 
 # vim
-*.swp
+*.swp*
 *.ses

@@ -1,26 +1,25 @@
-import requests
-from bs4 import BeautifulSoup
+class Webpage:
+    """Common base class for all articles/pages"""
+
+    def __init__(self, name, url, title_tag):
+        self.name = name
+        self.url = url
+        self.title_tag = title_tag
 
 
-class Crawler:
-    def get_page(self, url):
-        try:
-            req = resuests.get(url)
-        except requests.exceptions.RequestException:
-            return None
-        return BeautifulSoup(req.text, "lxml")
+class Product(Webpage):
+    """Contains information for scraping a product page"""
 
-    def safe_get(self, page_obj, selector):
-        child_obj = page_obj.select(selector)
-        if child_obj is not None and len(child_obj) > 0:
-            return child_obj[0].get_text()
-        return ""
+    def __init__(self, name, url, title_tag, product_number_tag, price_tag):
+        super().__init__(name, url, title_tag)
+        self.product_number_tag = product_number_tag
+        self.price_tag = price_tag
 
-    def search(self, topic, site):
-        """
-        Searches a given website for a given topic and records all pages found
-        """
-        bs = self.get_page(site.search_url + topic)
-        search_results = bs.select(site.result_listing)
-        for result in search_results:
-            url = result.select()
+
+class Article(Webpage):
+    """Contains information for scraping an article page"""
+
+    def __init__(self, name, url, title_tag, body_tag, date_tag):
+        super().__init__(name, url, title_tag)
+        self.body_tag = body_tag
+        self.date_tag = date_tag
